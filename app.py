@@ -173,7 +173,7 @@ app.secret_key = 'hello'
 
 
 # Path to the client secrets file
-client_secrets_file = "dhp_project/project1/client_secret_132188367039-dkuvrr1ct3gvrhh9qudl039ho6qp72fd.apps.googleusercontent.com.json"
+client_secrets_file = "credential.json"
 
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
