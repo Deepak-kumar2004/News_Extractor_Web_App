@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+            font-family: Arial, sans-serif; /* Default font family */
+            margin: 0;
+            padding: 0;
+            color: #333; /* Font color */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #0d5097; /* Dark blue color for headings */
+            font-family: 'Times New Roman', Times, serif; /* Times New Roman font for headings */
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff; /* White background for the table */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+            color: #333; /* Font color for table cells */
+        }
+
+        th {
+            background-color: #0d5097; /* Dark blue color for table header */
+            color: white; /* Font color for table header */
+            font-weight: bold;
+        }
+
+        .url-column {
+            width: 20%; /* Set width for URL column */
+            max-width: 200px; /* Set max-width for URL column */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Show ellipsis for long URLs */
+        }
+
+        .see-link {
+            color: #0d5097; /* Dark blue color for links */
+            text-decoration: none; /* Remove underline */
+        }
+
+        .see-link:hover {
+            text-decoration: underline; /* Add underline on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>User Details</h1>
+    <table>
+        <tr>
+            <th>Email</th>
+            <th>Profile Photo</th>
+            
+        </tr>
+
+        {% for row in data %}
+        <tr>
+            
+            <td>{{ row[1] }}</td>
+            <td class="url-column"><a href="{{ row[2] }}" target="_blank">{{ row[2] }}</a></td>
+            
+        </tr>
+        {% endfor %}
+    </table>
+
+    
+
+        
+    
+</body>
+</html>
+
