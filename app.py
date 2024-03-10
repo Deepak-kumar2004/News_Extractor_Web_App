@@ -332,6 +332,8 @@ def home():
 
                                 analysis_result["Extracted_head"] = extracted_head
                                 analysis_result["Extracted_Text"] = extracted_text
+                                analysis_result["Extracted_Text"] = "login to see"
+                                analysis_result["Extracted_Date"] = "login to see"
                                 analysis_result['Summary'] = "Login  first"
                                 analysis_result['Sentiment_score'],analysis_result['Sentiment_label'] = "Login first","Login first"
                                 analysis_result['Keywords'] = "Login first"
@@ -375,11 +377,13 @@ def home():
                         # Extract text from header and content tags
                         extracted_head = header.get_text(separator='\n', strip=True)
                         extracted_text = content.get_text(separator="\n", strip=True)
+                        extracted_date = soup.find(class_="xf8Pm byline").get_text(separator='\n',strip=True).split("Updated:")[1]
                     if not content:
                         a = soup.find(class_='JYT7F')
                         b = a.get_text(separator='\n',strip=True).split("Source:\nTOI.in")
                         extracted_head = b[0]
                         extracted_text = b[1]
+                        extracted_date = soup.find(class_="C85PU").get_text(separator='\n',strip=True)
 
                     if extracted_head and extracted_text:
                         # Perform text analysis on the extracted text
@@ -387,6 +391,7 @@ def home():
                         # Add additional analysis results like summary, sentiment analysis, and keywords
                         analysis_result["Extracted_head"] = extracted_head
                         analysis_result["Extracted_Text"] = extracted_text
+                        analysis_result["Extracted_Date"] = extracted_date
                         analysis_result['Summary'] = summarize(extracted_text, ratio=0.2)
                         analysis_result['Sentiment_score'],analysis_result['Sentiment_label'] = sentiment_analysis(extracted_text)
                         analysis_result['Keywords'] = keyword(extracted_text)
