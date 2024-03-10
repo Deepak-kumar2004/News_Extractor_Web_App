@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, session, url_for, redirect
 import requests
 from bs4 import BeautifulSoup
+import nltk
+nltk.download('all')
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
-import nltk
 import json
 from urllib.parse import urlparse
 from textblob import TextBlob
@@ -16,6 +17,7 @@ import google.auth.transport.requests
 from google.oauth2 import id_token
 import google
 from flask_session import Session  # Import Flask-Session
+
 
 ################################################################################################################
 
