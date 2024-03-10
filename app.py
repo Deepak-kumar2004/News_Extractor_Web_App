@@ -222,6 +222,7 @@ def callback():
 
 @app.route('/protected')
 def protected():
+    global login
     if 'google_token' in session:
         login = True
         # User is authenticated, retrieve user information
@@ -242,14 +243,7 @@ def protected():
         email = userinfo_data.get('email')
         profile = userinfo_data.get('picture')  # Change this according to the profile information you want to store
         
-        # # Check if the user's email already exists in the database
-        # conn = psycopg2.connect(
-        #     dbname='your_database_name',
-        #     user='your_database_user',
-        #     password='your_database_password',
-        #     host='localhost'
-        # )
-        # cur = conn.cursor()
+        
         cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cur.fetchone()
         if existing_user:
