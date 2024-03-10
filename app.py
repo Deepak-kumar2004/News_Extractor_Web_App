@@ -394,19 +394,19 @@ def home():
                         # Insert the analysis results into a PostgreSQL table
                         cur.execute("SELECT * FROM news_data WHERE URL = %s", (url,))
                         existing_url = cur.fetchone()
-                        if existing_url:
-                            pass
-                        else:
-                            try:
-                                cur.execute('''
-                                    INSERT INTO news_data(URL, headline, article, summary, words, sentances, stop_words, pos_tag, sentiment_score, sentiment_label, keywords, email)
-                                    VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)
-                                            ''', (url,extracted_head,extracted_text,analysis_result['Summary'],analysis_result['Word_count'],analysis_result['Sentance_Count'],analysis_result['Stop_Words'],analysis_result['Post_INFO'],
-                                                analysis_result['Sentiment_score'],analysis_result['Sentiment_label'],analysis_result['Keywords'],email))
-                                conn.commit()
-                            except:
-                                conn.commit()
-                                return render_template("result.html", result={"error": str(e),"mag":" try again after some time and reporter the developer at[deepak.kumar176362@gmail.com]"})
+                        # if existing_url:
+                        #     pass
+                        # else:
+                        try:
+                            cur.execute('''
+                                INSERT INTO news_data(URL, headline, article, summary, words, sentances, stop_words, pos_tag, sentiment_score, sentiment_label, keywords, email)
+                                VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                        ''', (url,extracted_head,extracted_text,analysis_result['Summary'],analysis_result['Word_count'],analysis_result['Sentance_Count'],analysis_result['Stop_Words'],analysis_result['Post_INFO'],
+                                            analysis_result['Sentiment_score'],analysis_result['Sentiment_label'],analysis_result['Keywords'],email))
+                            conn.commit()
+                        except:
+                            conn.commit()
+                            return render_template("result.html", result={"error": str(e),"mag":" try again after some time and reporter the developer at[deepak.kumar176362@gmail.com]"})
 
                         # Render the result.html template with the analysis results
                         return render_template("result.html", result=analysis_result)
@@ -459,7 +459,10 @@ def user_details():
     else:
         return render_template("result.html", result={"error": "You are not authorize"})
 
-    
+@app.route("/developer",methods=["GET","POST"])
+def developer():
+    return render_template("developer.html")
+   
 
 
 
