@@ -332,7 +332,6 @@ def home():
 
                                 analysis_result["Extracted_head"] = extracted_head
                                 analysis_result["Extracted_Text"] = extracted_text
-                                analysis_result["Extracted_Text"] = "login to see"
                                 analysis_result["Extracted_Date"] = "login to see"
                                 analysis_result['Summary'] = "Login  first"
                                 analysis_result['Sentiment_score'],analysis_result['Sentiment_label'] = "Login first","Login first"
