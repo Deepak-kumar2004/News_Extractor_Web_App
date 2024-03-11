@@ -191,9 +191,11 @@ flow = Flow.from_client_secrets_file(client_secrets_file, scopes=scopes, redirec
 
 @app.route('/login')
 def login():
+
+    # Using "global" to change login variable inside the function.
     global login
     
-    
+    # Checking does user alreday?
     if 'google_token' in session:
         login = True
         # User is already authenticated, redirect to a protected route
@@ -217,7 +219,7 @@ def callback():
     flow.fetch_token(code=request.args.get('code'))
     session['google_token'] = flow.credentials.token
 
-    # Redirect to the protected route or another page
+    # Redirect to the protected route 
     return redirect(url_for('protected'))
 
 
@@ -225,7 +227,11 @@ def callback():
 
 @app.route('/protected')
 def protected():
+
+    # Using "global" to change login variable inside the function.
     global login
+
+    # Checking does user authenticated?
     if 'google_token' in session:
         login = True
         # User is authenticated, retrieve user information
@@ -241,36 +247,36 @@ def protected():
         headers = {'Authorization': f'Bearer {session["google_token"]}'}
         userinfo_response = requests.get(userinfo_endpoint, headers=headers)
         userinfo_data = userinfo_response.json()
+
+        # Make email and profile global, to use outside the function
         global email
         global profile
+
+        # Extracting user email and profile photo
         email = userinfo_data.get('email')
-        profile = userinfo_data.get('picture')  # Change this according to the profile information you want to store
+        profile = userinfo_data.get('picture')  
         
-        
+        # Fecthing user email from our user data, to check if user already exist or not!
         cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cur.fetchone()
-        if existing_user:
-            # User already exists, do not insert into the database
-            print("User already exists")
-        else:
+
+        # User already exists, do not insert into the database
+        if not existing_user:
+            
             try:
-                # User does not exist, insert into the database
+                # inserting user into the database
                 cur.execute("INSERT INTO users (email, profile) VALUES (%s, %s)", (email, profile))
                 conn.commit()
                 print("User inserted into the database")
             except Exception as e:
                 conn.commit()
-                return render_template("result.html", result={"error": str(e),"mag":" try again after some time and reporter the developer at[deepak.kumar176362@gmail.com]"})
+                return render_template("result.html", result={"error": str(e),"mag":" try again after some time and report the developer at[deepak.kumar176362@gmail.com]"})
         
-        # cur.close()
-        # conn.close()
-
-        # Print access token and its expiration time
-        print('Access Token:', session['google_token'])
-        print('Token Expiry:', session_credentials.expiry)
+       
+        # Redirecting to Home Page.
         return redirect(url_for('home'))
     else:
-        # User is not authenticated, redirect to the homepage
+        # User is not authenticated, redirect to the login page again.
         return redirect(url_for('login'))
     
 @app.route('/logout')
@@ -285,23 +291,35 @@ def logout():
     login = False
     return redirect(url_for('home'))
 
+# Defining global variable to use
 login = False
 free = 0
 profile = ""
 email = ""
+
+# Defining the admins
 admins = ["deepak.kumar176362@gmail.com","deepaksingh987171@gmail.com","su-23008@sitare.org","kushal@sitare.org",'atmabodha@gmail.com']
-# Define the home route for both POST and GET methods
+
+
+
+# Defining the home page route
 @app.route("/", methods=["POST", "GET"])
 def home():
 
     global login
+
+    # Checking if user is already login or not.
     if session:
         login = True
-    # global login
+    
     # Check if the request method is POST
     if request.method == "POST":
+
+        # checking does user login or not 
         if 'google_token' not in session:
             global free
+
+            # user is not login we are giving 2 chances to use this with some restricted details.
             if free < 2 :
                 free += 1
                 url = request.form.get("URL")
@@ -328,15 +346,21 @@ def home():
                                 extracted_text = b[1]
 
                             if extracted_head and extracted_text:
+
+                                # defining dictionary to saved the result 
                                 analysis_result ={}
 
+                                # saving the headline and the article in the resulting dictionary
                                 analysis_result["Extracted_head"] = extracted_head
                                 analysis_result["Extracted_Text"] = extracted_text
+
+                                # remaining the data will not be calculated without login, hence setting other parameter to "Login first" 
                                 analysis_result["Extracted_Date"] = "login to see"
                                 analysis_result['Summary'] = "Login  first"
                                 analysis_result['Sentiment_score'],analysis_result['Sentiment_label'] = "Login first","Login first"
                                 analysis_result['Keywords'] = "Login first"
 
+                                
                                 return render_template("result.html", result=analysis_result)
                             else:
                                 # Render an error message if content is not found
@@ -354,11 +378,11 @@ def home():
 
 
             else:
-                # User is not authenticated, redirect to a protected route
+                # User is not authenticated, redirect to a google login page 
                 return redirect(url_for('login'))
         
         
-        # Get the URL from the form data
+        # Get the URL from the form form tag
         url = request.form.get("URL")
         if url:
             try:
@@ -373,10 +397,12 @@ def home():
                     content = soup.find(class_="_s30J clearfix")
                     
                     if content:
-                        # Extract text from header and content tags
+                        # Extract text from header, content tags and post date. 
                         extracted_head = header.get_text(separator='\n', strip=True)
                         extracted_text = content.get_text(separator="\n", strip=True)
                         extracted_date = soup.find(class_="xf8Pm byline").get_text(separator='\n',strip=True).split("Updated:")[1]
+                    
+                    # if content not found in above class than finding in different class
                     if not content:
                         a = soup.find(class_='JYT7F')
                         b = a.get_text(separator='\n',strip=True).split("Source:\nTOI.in")
@@ -395,20 +421,20 @@ def home():
                         analysis_result['Sentiment_score'],analysis_result['Sentiment_label'] = sentiment_analysis(extracted_text)
                         analysis_result['Keywords'] = keyword(extracted_text)
 
-                        # Insert the analysis results into a PostgreSQL table
-                        cur.execute("SELECT * FROM news_data WHERE URL = %s", (url,))
-                        existing_url = cur.fetchone()
-                        # if existing_url:
-                        #     pass
-                        # else:
+                        
                         try:
+
+                            #inserting the detailed data into the postgres database
                             cur.execute('''
                                 INSERT INTO news_data(URL, headline, article, summary, words, sentances, stop_words, pos_tag, sentiment_score, sentiment_label, keywords, email)
                                 VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)
                                         ''', (url,extracted_head,extracted_text,analysis_result['Summary'],analysis_result['Word_count'],analysis_result['Sentance_Count'],analysis_result['Stop_Words'],analysis_result['Post_INFO'],
                                             analysis_result['Sentiment_score'],analysis_result['Sentiment_label'],analysis_result['Keywords'],email))
+                            
+                            # commiting the changes
                             conn.commit()
                         except:
+                            # if error comes in the transction than commiting and displaying the error
                             conn.commit()
                             return render_template("result.html", result={"error": str(e),"mag":" try again after some time and reporter the developer at[deepak.kumar176362@gmail.com]"})
 
@@ -434,39 +460,53 @@ def home():
 
 
 
-@app.route("/admin",methods=["GET","POST"])
+# Route for admin functionality
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
+    # Check if the email is in the list of admins
     if email in admins:
-        cur.execute("select * from news_data")
+        # Execute SQL query to fetch all news data
+        cur.execute("SELECT * FROM news_data")
         data1 = cur.fetchall()
-        return render_template("admin.html",data=data1)
+        # Render admin.html template with the fetched data
+        return render_template("admin.html", data=data1)
     else:
-        return render_template("result.html", result={"error": "You are not authorize"})
-    
+        # Render result.html template with an error message
+        return render_template("result.html", result={"error": "You are not authorized"})
 
-@app.route("/history",methods=["GET","POST"])
+# Route for viewing user history
+@app.route("/history", methods=["GET", "POST"])
 def view_history():
+    # Check if the email is available
     if email:
+        # Execute SQL query to fetch news data for the logged-in user
         cur.execute("SELECT * FROM news_data WHERE email = %s", (email,))
         data1 = cur.fetchall()
-        return render_template("view_history.html",data=data1)
+        # Render view_history.html template with the fetched data
+        return render_template("view_history.html", data=data1)
     else:
+        # Render result.html template with an error message
         return render_template("result.html", result={"error": "Login first to see your history"})
-    
 
-@app.route("/user_details",methods=["GET","POST"])
+# Route for displaying user details
+@app.route("/user_details", methods=["GET", "POST"])
 def user_details():
+    # Check if the email is in the list of admins
     if email in admins:
-        cur.execute("select * from users")
+        # Execute SQL query to fetch all user details
+        cur.execute("SELECT * FROM users")
         data1 = cur.fetchall()
-        return render_template("user_details.html",data=data1)
+        # Render user_details.html template with the fetched data
+        return render_template("user_details.html", data=data1)
     else:
-        return render_template("result.html", result={"error": "You are not authorize"})
+        # Render result.html template with an error message
+        return render_template("result.html", result={"error": "You are not authorized"})
 
-@app.route("/developer",methods=["GET","POST"])
+# Route for developer page
+@app.route("/developer", methods=["GET", "POST"])
 def developer():
+    # Render developer.html template
     return render_template("developer.html")
-   
 
 
 
