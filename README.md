@@ -1,1 +1,1 @@
-# New_Extractor_Web_App
+# News_Extractor_Web_App
