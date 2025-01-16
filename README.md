@@ -72,11 +72,19 @@ This web application extracts news articles from *The Times of India*, analyzes 
 - **Home Page (Non-Logged-In Users)**  
   ![Home Page](images/home_page_without_login.png)  
 - **Result Page without Login**  
-  ![Result Page](images/image2.png)  
-- **Login Page**  
-  ![Login Page](images/result_page_without_login.png)  
-- **Admin Dashboard**  
-  ![Admin Dashboard](images/image4.png)  
+  ![Result Page](images/result_page_without_login.png)  
+- **Home After Login Page**  
+  ![Login Page](images/home_page_with_login.png)  
+- **Developer Page**  
+  ![Admin Dashboard](images/developer_page.png)
+- **Result Page with Text Analysis**  
+  ![Admin Dashboard](images/result_with_text_analysis.png) 
+- **Admin Interface**  
+  ![Admin Dashboard](images/admin_home_page.png)
+- **Databse View for Admin**  
+  ![Admin Dashboard](images/database_for_admin.png)
+- **User Details**  
+  ![Admin Dashboard](images/user_data_for_admin.png) 
 
 
 
