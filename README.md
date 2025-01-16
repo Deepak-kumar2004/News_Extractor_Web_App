@@ -70,11 +70,11 @@ This web application extracts news articles from *The Times of India*, analyzes 
 
 ## **Screenshots**
 - **Home Page (Non-Logged-In Users)**  
-  ![Home Page](images/image1.png)  
-- **Result Page**  
+  ![Home Page](images/home_page_without_login.png)  
+- **Result Page without Login**  
   ![Result Page](images/image2.png)  
 - **Login Page**  
-  ![Login Page](images/image3.png)  
+  ![Login Page](images/result_page_without_login.png)  
 - **Admin Dashboard**  
   ![Admin Dashboard](images/image4.png)  
 
