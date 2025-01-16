@@ -23,9 +23,7 @@ from flask_session import Session  # Import Flask-Session
 
 
 # Connecting the postgres database
-conn = psycopg2.connect(
-host="dpg-cu4jed5ds78s739uqkn0-a",database="news_records",user='deepu',password='EzaXdzYTSLL2Xo2I6nIy1FESO08L1CSk')
-
+conn = psycopg2.connect("postgresql://deepu:EzaXdzYTSLL2Xo2I6nIy1FESO08L1CSk@dpg-cu4jed5ds78s739uqkn0-a/news_records")
 # Create a cursor object
 cur = conn.cursor()
 
